@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Customer Page - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- PAGE HEADING -->
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-4xl font-bold text-slate-800">Customer Records</h1>
+      <p class="text-slate-500 mt-2">View and manage all registered customers.</p>
+    </div>
+    <a href="{% url 'customer_deposit' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-semibold transition">
+      + New Deposit
+    </a>
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-x-auto">
+    <table class="w-full min-w-[900px]">
+      <thead class="bg-gray-900 text-white">
+        <tr>
+          <th class="text-left py-4 px-4">Customer Name</th>
+          <th class="text-left py-4 px-4">Phone</th>
+          <th class="text-left py-4 px-4">Product</th>
+          <th class="text-left py-4 px-4">NIN</th>
+          <th class="text-left py-4 px-4">Location</th>
+          <th class="text-left py-4 px-4">Total Price</th>
+          <th class="text-left py-4 px-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for customer in customers %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+          <td class="py-4 px-4 font-medium text-slate-800">{{ customer.customer_name }}</td>
+          <td class="px-4 text-slate-600">{{ customer.phone }}</td>
+          <td class="px-4 text-slate-600">{{ customer.product_name }}</td>
+          <td class="px-4 text-slate-600">{{ customer.nin }}</td>
+          <td class="px-4 text-slate-600">{{ customer.location }}</td>
+          <td class="px-4 font-bold text-green-600">{{ customer.total_price }} UGX</td>
+          <td class="px-4 py-4">
+            <div class="flex gap-2">
+              <a href="{% url 'view_customer' customer.id %}"
+                class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                View
+              </a>
+              <a href="{% url 'update_customer' customer.id %}"
+                class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                Edit
+              </a>
+              <form method="POST" action="{% url 'delete_customer' customer.id %}"
+                onsubmit="return confirm('Delete {{ customer.customer_name }}? This cannot be undone.');"
+                style="margin:0">
+                {% csrf_token %}
+                <button type="submit"
+                  class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center py-8 text-slate-500">No customers found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

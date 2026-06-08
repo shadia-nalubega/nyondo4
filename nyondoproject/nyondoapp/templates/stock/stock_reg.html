@@ -1,0 +1,195 @@
+{% extends 'base_stock.html' %}
+{% load static %}
+
+{% block title %}Stock Registration - NyondoStock{% endblock %}
+
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    .price-display { background-color: #e9ecef; }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container py-4">
+    <div class="shadow-lg p-4 rounded bg-white mx-auto" style="max-width: 780px;">
+
+      <div class="text-center mb-4">
+        <h2 class="text-primary">NyondoStock</h2>
+        <h3>Stock Registration Form</h3>
+        <hr/>
+      </div>
+
+      <form method="POST" action="{% url 'stock_register' %}" id="stockForm">
+        {% csrf_token %}
+
+        <h5 class="text-primary mb-3">Stock Details</h5>
+
+        <!-- PRODUCT ID & NAME -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Product ID</label>
+            <input type="text" name="product_id" id="product_id" class="form-control"
+              value="{{ request.session.temp_product_id|default:'' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Product Name</label>
+            <select name="product_name" id="product_name" class="form-control" required>
+              {% for product in products %}
+              <option value="{{ product.product_name }}"
+                {% if product.product_name == request.session.temp_product_name %}selected{% endif %}>
+                {{ product.product_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- QUANTITY, UNITS, COST PRICE -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Initial Quantity</label>
+            <input type="number" name="quantity" id="quantity" class="form-control"
+              value="{{ request.session.temp_quantity|default:'' }}" min="0" required/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Unit Of Measure</label>
+            <select name="units" id="units" class="form-control" required>
+              <option value="">Select Unit</option>
+              <option value="pieces">Pieces</option>
+              <option value="kg">Kilograms</option>
+              <option value="bags">Bags</option>
+              <option value="rolls">Rolls</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Cost Price (UGX)</label>
+            <input type="number" name="cost_price" id="cost_price" class="form-control"
+              value="{{ request.session.temp_cost_price|default:'' }}" min="0" required/>
+          </div>
+        </div>
+
+        <!-- SET PRICES BUTTON -->
+        <div class="mb-3">
+          <button type="button" class="btn btn-primary" onclick="pushToPriceForm()">
+            Set Product Prices →
+          </button>
+        </div>
+
+        <!-- PRICING SECTION -->
+        <div class="border p-3 mb-3 bg-light">
+          <h5 class="text-primary">Selling Prices (set prices please)</h5>
+
+          <div class="row mb-2">
+            <div class="col-md-4"><strong>Wholesaler:</strong></div>
+            <div class="col-md-4">
+              Rate: <input type="text" id="wholesaler_rate_display" class="form-control form-control-sm price-display"
+                value="{{ request.session.temp_wholesale_rate|default:'' }}" readonly style="display:inline-block; width:80px"/>
+            </div>
+            <div class="col-md-4">
+              Price: <input type="text" name="wholesaler_price" id="wholesaler_price" class="form-control form-control-sm price-display"
+                value="{{ request.session.temp_wholesale_price|default:'' }}" readonly style="display:inline-block; width:100px"/>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-md-4"><strong>Retailer:</strong></div>
+            <div class="col-md-4">
+              Rate: <input type="text" id="retailer_rate_display" class="form-control form-control-sm price-display"
+                value="{{ request.session.temp_retail_rate|default:'' }}" readonly style="display:inline-block; width:80px"/>
+            </div>
+            <div class="col-md-4">
+              Price: <input type="text" name="retailer_price" id="retailer_price" class="form-control form-control-sm price-display"
+                value="{{ request.session.temp_retail_price|default:'' }}" readonly style="display:inline-block; width:100px"/>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-md-4"><strong>Normal Buyer:</strong></div>
+            <div class="col-md-4">
+              Rate: <input type="text" id="normal_rate_display" class="form-control form-control-sm price-display"
+                value="{{ request.session.temp_normal_rate|default:'' }}" readonly style="display:inline-block; width:80px"/>
+            </div>
+            <div class="col-md-4">
+              Price: <input type="text" name="normal_price" id="normal_price" class="form-control form-control-sm price-display"
+                value="{{ request.session.temp_normal_price|default:'' }}" readonly style="display:inline-block; width:100px"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- HIDDEN PRICE FIELDS -->
+        <input type="hidden" name="wholesale_rate" value="{{ request.session.temp_wholesale_rate|default:'' }}"/>
+        <input type="hidden" name="wholesale_price" value="{{ request.session.temp_wholesale_price|default:'' }}"/>
+        <input type="hidden" name="retailer_rate" value="{{ request.session.temp_retail_rate|default:'' }}"/>
+        <input type="hidden" name="retailer_price" value="{{ request.session.temp_retail_price|default:'' }}"/>
+        <input type="hidden" name="normal_rate" value="{{ request.session.temp_normal_rate|default:'' }}"/>
+        <input type="hidden" name="normal_price" value="{{ request.session.temp_normal_price|default:'' }}"/>
+
+        <!-- SUPPLIER -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Supplier</label>
+          <select name="supplier" class="form-control" required>
+            <option value="">-- Select a supplier --</option>
+            {% for supplier in suppliers %}
+            <option value="{{ supplier.id }}">{{ supplier.company_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
+          <button type="submit" class="btn btn-primary px-4">Register Stock</button>
+          <button type="reset" class="btn btn-secondary px-4">Clear Form</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function pushToPriceForm() {
+      const productName = document.getElementById("product_name").value;
+      const productId = document.getElementById("product_id").value;
+      const costPrice = document.getElementById("cost_price").value;
+      const quantity = document.getElementById("quantity").value;
+
+      if (!productName || !costPrice) {
+        alert("Please enter Product Name and Cost Price first");
+        return;
+      }
+
+      const tempForm = document.createElement("form");
+      tempForm.method = "POST";
+      tempForm.action = "{% url 'stock_reg' %}";
+
+      const csrfInput = document.createElement("input");
+      csrfInput.type = "hidden";
+      csrfInput.name = "csrfmiddlewaretoken";
+      csrfInput.value = "{{ csrf_token|escapejs }}";
+      tempForm.appendChild(csrfInput);
+
+      const fields = {
+        temp_product_name: productName,
+        temp_product_id: productId,
+        temp_cost_price: costPrice,
+        temp_quantity: quantity,
+      };
+
+      for (const [name, value] of Object.entries(fields)) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        tempForm.appendChild(input);
+      }
+
+      document.body.appendChild(tempForm);
+      tempForm.submit();
+    }
+  </script>
+{% endblock %}

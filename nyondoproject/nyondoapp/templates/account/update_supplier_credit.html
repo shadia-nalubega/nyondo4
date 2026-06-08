@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Supplier Credit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0 fw-bold">Edit Supplier Credit</h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Company Name</label>
+              <select name="supplier_name" class="form-select" required>
+                {% for supplier in suppliers %}
+                <option value="{{ supplier.id }}"
+                  {% if supplier.id == credit.company_name.id %}selected{% endif %}>
+                  {{ supplier.company_name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Amount Owed (UGX)</label>
+              <input type="number" name="amount_owed" class="form-control"
+                     value="{{ credit.amount_owed }}" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Quantity</label>
+              <input type="number" name="quantity" class="form-control"
+                     value="{{ credit.quantity }}" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Status</label>
+              <select name="status" class="form-select">
+                <option value="Pending"  {% if credit.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Paid"     {% if credit.status == 'Paid' %}selected{% endif %}>Paid</option>
+                <option value="Overdue"  {% if credit.status == 'Overdue' %}selected{% endif %}>Overdue</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Notes</label>
+              <textarea name="notes" class="form-control" rows="3">{{ credit.notes }}</textarea>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-success px-4">Save Changes</button>
+              <a href="{% url 'supplier_credit_table' %}" class="btn btn-secondary px-4">Cancel</a>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

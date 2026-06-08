@@ -1,0 +1,201 @@
+{% load static humanize %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Receipt - NYONDOSTOCK</title>
+
+    <!-- TAILWIND -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GOOGLE FONT -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: #f8fafc;
+      }
+
+      @media print {
+        .no-print {
+          display: none;
+        }
+
+        body {
+          background: white;
+        }
+
+        .receipt-card {
+          box-shadow: none;
+          border: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="py-10 px-4 text-slate-650">
+    <!-- RECEIPT CARD -->
+    <div
+      class="receipt-card max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden"
+    >
+      <!-- HEADER -->
+      <div
+        class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-8 py-6"
+      >
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold">NYONDOSTOCK</h1>
+
+            <p class="text-indigo-100 mt-1">Sales Receipt</p>
+          </div>
+
+          <div
+            class="bg-green-500 px-4 py-2 rounded-xl text-sm font-semibold"
+          >
+            PAID
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="p-8">
+        <!-- RECEIPT INFO -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b border-slate-200 pb-6"
+        >
+          <div>
+            <p class="text-sm text-slate-500 mb-1">Receipt Number</p>
+
+            <h3 class="font-semibold text-lg">#{{ sale.id }}</h3>
+          </div>
+
+          <div>
+            <p class="text-sm text-slate-500 mb-1">Date</p>
+
+            <h3 class="font-semibold text-lg">
+              {{ sale.date|date:"M d, Y" }}
+            </h3>
+          </div>
+
+          <div>
+            <p class="text-sm text-slate-500 mb-1">Customer</p>
+
+            <h3 class="font-semibold text-lg">
+              {{ sale.customer_name }}
+            </h3>
+          </div>
+
+          <div>
+            <p class="text-sm text-slate-500 mb-1">Payment Method</p>
+
+            <h3 class="font-semibold text-lg">
+              {{ sale.payment }}
+            </h3>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="mt-8 overflow-x-auto">
+          <table class="w-full min-w-[600px]">
+            <thead class="bg-gray-900 text-white">
+              <tr>
+                <th class="text-left px-4 py-3">Item</th>
+
+                <th class="text-left px-4 py-3">Quantity</th>
+
+                <th class="text-left px-4 py-3">Unit Price</th>
+
+                <th class="text-left px-4 py-3">Amount</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="px-4 py-4">
+                  {{ sale.product_name }}
+                </td>
+
+                <td class="px-4 py-4">
+                  {{ sale.quantity }}
+                </td>
+
+                <td class="px-4 py-4">
+                  UGX {{ sale.selling_price|floatformat:0|intcomma }}
+                </td>
+
+                <td class="px-4 py-4 font-semibold text-green-600">
+                  UGX {{ sale.total_amount|floatformat:0|intcomma }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TOTALS -->
+        <div class="mt-8 flex justify-end">
+          <div class="w-full md:w-80 space-y-3">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Subtotal</span>
+
+              <span class="font-medium">
+                UGX {{ sale.total_amount|floatformat:0|intcomma }}
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Transport Fee</span>
+
+              <span class="font-medium">
+                UGX {{ sale.transport_fee|floatformat:0|intcomma }}
+              </span>
+            </div>
+
+            <div class="border-t border-slate-200 pt-3 flex justify-between">
+              <span class="text-lg font-bold">Grand Total</span>
+
+              <span class="text-xl font-bold text-indigo-600">
+                UGX {{ grand_total|floatformat:0|intcomma }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div
+          class="mt-10 pt-6 border-t border-slate-200 text-center text-slate-500 text-sm"
+        >
+          <p>Thank you for your business.</p>
+
+          <p class="mt-1">Goods sold are not returnable.</p>
+        </div>
+
+        <!-- BUTTONS -->
+        <div
+          class="no-print mt-8 flex flex-wrap justify-center gap-4"
+        >
+          <button
+            type="button"
+            onclick="window.print()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-semibold transition"
+          >
+            Print Receipt
+          </button>
+
+          <a
+            href="{% url 'dashboard_redirect' %}"
+            class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-2xl font-semibold transition"
+          >
+            Back
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+<!-- the window.print has opens a browser print dialog  -->

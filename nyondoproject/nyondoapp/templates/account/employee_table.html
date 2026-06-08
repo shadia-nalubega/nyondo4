@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'account/css/credit.css' %}"/>
+{% endblock %}
+
+{% block title %}Employee Records - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- PAGE HEADING -->
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-4xl font-bold text-slate-800">Employee Records</h1>
+      <p class="text-slate-500 mt-2">Manage registered system employees.</p>
+    </div>
+    <a href="{% url 'users' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl transition">
+      + Add Employee
+    </a>
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-x-auto">
+    <table class="w-full min-w-[800px] border-collapse">
+      <thead class="bg-slate-900 text-white">
+        <tr>
+          <th class="px-6 py-4 text-left font-semibold">Employee ID</th>
+          <th class="px-6 py-4 text-left font-semibold">Full Name</th>
+          <th class="px-6 py-4 text-left font-semibold">Username</th>
+          <th class="px-6 py-4 text-left font-semibold">Email</th>
+          <th class="px-6 py-4 text-left font-semibold">Role</th>
+          <th class="px-6 py-4 text-left font-semibold">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in employees %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+          <td class="px-6 py-4 font-medium text-slate-800">{{ employee.employee_id }}</td>
+          <td class="px-6 py-4 text-slate-700">
+            {% if employee.user.first_name %}{{ employee.user.first_name }}{% else %}{{ employee.user.username }}{% endif %}
+          </td>
+          <td class="px-6 py-4 text-slate-700">{{ employee.user.username }}</td>
+          <td class="px-6 py-4 text-slate-700">{{ employee.user.email }}</td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold
+              {% if employee.role == 'admin' %}bg-purple-100 text-purple-800
+              {% elif employee.role == 'sales_attendant' %}bg-blue-100 text-blue-800
+              {% elif employee.role == 'store_manager' %}bg-green-100 text-green-800
+              {% else %}bg-gray-100 text-gray-700{% endif %}">
+              {{ employee.role }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <a href="{% url 'view_employee' employee.id %}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm">View</a>
+              <a href="{% url 'update_employee' employee.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm">Update</a>
+              <a href="{% url 'delete_employee' employee.id %}" onclick="return confirm('Are you sure?')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+            No employees found. Click "Add Employee" to register one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

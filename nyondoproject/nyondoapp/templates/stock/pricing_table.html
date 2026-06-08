@@ -1,0 +1,87 @@
+{% extends 'base_stock.html' %}
+{% load static %}
+
+{% block title %}Product Pricing - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- PAGE HEADING -->
+  <div class="mb-8 flex items-center justify-between mt-4">
+    <div>
+      <h1 class="text-4xl font-bold text-slate-800">Product Pricing Table</h1>
+      <p class="text-slate-500 mt-2">Manage product prices for all buyer types.</p>
+    </div>
+    <a href="{% url 'price' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-semibold transition">
+      + Add / Edit Prices
+    </a>
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-x-auto">
+    <table class="w-full min-w-[1000px]">
+      <thead class="bg-gray-900 text-white">
+        <tr>
+          <th class="text-left py-4 px-4" rowspan="2">Product Name</th>
+          <th class="text-center py-4 px-4" rowspan="2">Unit Price (UGX)</th>
+          <th class="text-center py-2 px-4 border-b border-slate-600" colspan="2">Wholesaler</th>
+          <th class="text-center py-2 px-4 border-b border-slate-600" colspan="2">Retailer</th>
+          <th class="text-center py-2 px-4 border-b border-slate-600" colspan="2">Normal Buyer</th>
+          <th class="text-center py-4 px-4" rowspan="2">Actions</th>
+        </tr>
+        <tr class="bg-gray-800 text-slate-300 text-xs">
+          <th class="text-center py-2 px-4">Rate (%)</th>
+          <th class="text-center py-2 px-4">Price (UGX)</th>
+          <th class="text-center py-2 px-4">Rate (%)</th>
+          <th class="text-center py-2 px-4">Price (UGX)</th>
+          <th class="text-center py-2 px-4">Rate (%)</th>
+          <th class="text-center py-2 px-4">Price (UGX)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in pricing_list %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+          <td class="py-4 px-4 font-bold text-slate-800">{{ item.product_name }}</td>
+          <td class="px-4 text-center font-semibold text-slate-700">{{ item.unit_price|default:"0"|floatformat:0 }}</td>
+
+          <td class="px-4 text-center">
+            <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded-lg text-xs">{{ item.wholesaler_rate }}%</span>
+          </td>
+          <td class="px-4 text-center font-semibold text-indigo-600">{{ item.wholesaler_price }}</td>
+
+          <td class="px-4 text-center">
+            <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded-lg text-xs">{{ item.retailer_rate }}%</span>
+          </td>
+          <td class="px-4 text-center font-semibold text-indigo-600">{{ item.retailer_price }}</td>
+
+          <td class="px-4 text-center">
+            <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded-lg text-xs">{{ item.normal_rate }}%</span>
+          </td>
+          <td class="px-4 text-center font-semibold text-indigo-600">{{ item.normal_price }}</td>
+
+          <td class="px-4 py-4 text-center">
+            <div class="flex gap-2 justify-center">
+              <a href="{% url 'edit_price' item.id %}"
+                class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                Edit
+              </a>
+              <form method="POST" action="{% url 'delete_price' item.id %}"
+                onsubmit="return confirm('Delete pricing for {{ item.product_name }}?');" style="margin:0">
+                {% csrf_token %}
+                <button type="submit"
+                  class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="text-center py-8 text-slate-500">No pricing records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Deposit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="card shadow-sm mx-auto" style="max-width: 650px;">
+
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0 fw-bold">Edit Deposit — {{ customer.customer_name }}</h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+
+            <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Customer Information</h6>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Customer Name</label>
+              <input type="text" name="customer_name" class="form-control"
+                     value="{{ customer.customer_name }}" required />
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Phone</label>
+                <input type="text" name="phone" class="form-control"
+                       value="{{ customer.phone }}" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Product Name</label>
+                <select name="product_name" class="form-select">
+                  <option value="cement"      {% if customer.product_name == 'cement' %}selected{% endif %}>Cement</option>
+                  <option value="iron sheets" {% if customer.product_name == 'iron sheets' %}selected{% endif %}>Iron Sheets</option>
+                  <option value="iron bars"   {% if customer.product_name == 'iron bars' %}selected{% endif %}>Iron Bars</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">NIN</label>
+                <input type="text" name="nin" class="form-control"
+                       value="{{ customer.nin }}" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Location</label>
+                <input type="text" name="location" class="form-control"
+                       value="{{ customer.location }}" required />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-bold">Total Price (UGX)</label>
+              <input type="number" name="total_price" class="form-control"
+                     value="{{ customer.total_price }}" required />
+            </div>
+
+            <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Deposit Information</h6>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Deposit Amount (UGX)</label>
+                <input type="number" name="deposit_amount" class="form-control"
+                       value="{{ deposit.deposit_amount }}" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Deposit Date</label>
+                <input type="date" name="deposit_date" class="form-control"
+                       value="{{ deposit.deposit_date }}" required />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Expected Completion</label>
+                <input type="date" name="expected_completion" class="form-control"
+                       value="{{ deposit.expected_completion }}" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Status</label>
+                <select name="status" class="form-select">
+                  <option value="Active"   {% if deposit.status == 'Active' %}selected{% endif %}>Active</option>
+                  <option value="Pending"  {% if deposit.status == 'Pending' %}selected{% endif %}>Pending</option>
+                  <option value="Finished" {% if deposit.status == 'Finished' %}selected{% endif %}>Finished</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-success px-4">Save Changes</button>
+              <a href="{% url 'deposit_page' %}" class="btn btn-secondary px-4">Cancel</a>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

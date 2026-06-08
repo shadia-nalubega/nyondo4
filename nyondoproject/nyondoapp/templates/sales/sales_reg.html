@@ -1,0 +1,213 @@
+{% extends 'base_sales.html' %}
+{% load static %}
+
+{% block title %}Register Sale - NyondoStock{% endblock %}
+
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'account/css/sales_reg.css' %}"/>
+  <style>
+    .item-row { border: none !important; background: transparent !important; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #dee2e6 !important; }
+    .form-control, .form-select { background-color: #fff; }
+    .item-actions { margin-top: 15px; padding-top: 10px; display: flex; gap: 10px; justify-content: flex-end; }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container ">
+    <div >
+
+      <!-- <div class="text-center mb-4">
+        <h2 class="text-primary">NyondoStock</h2>
+        <h3>Sales Form</h3>
+        <hr/>
+      </div> -->
+
+      <form method="POST" id="salesForm">
+        {% csrf_token %}
+
+        <!-- CUSTOMER DETAILS -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Cashier</label>
+            <input type="text" name="cashier" class="form-control" required/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Customer Name</label>
+            <input type="text" name="customer_name" class="form-control" required/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Phone</label>
+            <input type="text" name="phone" class="form-control"/>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Customer Type</label>
+            <select name="customer_type" id="customer_type" class="form-control" required>
+              <option value="normal">Select customer</option>
+              <option value="normal">Normal Buyer</option>
+              <option value="retailer">Retailer</option>
+              <option value="wholesaler">Wholesaler</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Payment Method</label>
+            <select name="payment" class="form-control" required>
+              <option value="Cash">Cash</option>
+              <option value="Mobile Money">Mobile Money</option>
+              <option value="Card">Card</option>
+            </select>
+          </div>
+        </div>
+
+        <hr/>
+        <h4 class="text-primary mb-3">Items Sold</h4>
+
+        <!-- ITEMS CONTAINER -->
+        <div id="items-container"></div>
+
+        <div class="row mt-3 mb-3">
+          <div class="col-md-12 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-danger" onclick="deleteLastItem()">✖ Delete Last Item</button>
+            <button type="button" class="btn btn-primary" onclick="addNewItem()">+ Add Item</button>
+          </div>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+          <div class="col-md-6"><h5>Subtotal: <span id="subtotal">0</span> UGX</h5></div>
+          <div class="col-md-6"><h5>Transport Fee: <span id="transport">0</span> UGX</h5></div>
+        </div>
+        <div class="row">
+          <div class="col-md-12"><h4>GRAND TOTAL: <span id="grandtotal">0</span> UGX</h4></div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
+          <button type="submit" class="btn btn-success px-4">Register Sale</button>
+          <a href="{% url 'receipt' %}" class="btn btn-primary px-4">Generate Receipt</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- HIDDEN ITEM TEMPLATE -->
+  <div id="item-template" style="display: none">
+    <div class="item-row">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Product</label>
+          <select name="product_name" class="form-control product" onchange="handleProductChange(this)" required>
+            <option value="">-- Select Product --</option>
+            {% for product in products %}
+            <option value="{{ product.product_name }}">{{ product.product_name }}</option>
+            {% endfor %}
+          </select>
+          <div class="error-msg text-danger small"></div>
+        </div>
+        <div class="col-md-4">
+          <label>Quantity</label>
+          <input type="number" name="quantity" class="form-control qty" min="1" onchange="calcRowTotal(this)" required/>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <label>Selling Price</label>
+          <input type="text" name="selling_price" class="form-control price" readonly/>
+        </div>
+        <div class="col-md-4">
+          <label>Distance (km)</label>
+          <input type="number" name="distance" class="form-control distance" min="0" onchange="calculateGrandTotal()"/>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-6">
+          <label>Item Total:</label>
+          <strong class="item-total">0</strong> UGX
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    /* all your existing JS unchanged */
+    function deleteLastItem() {
+      let rows = document.querySelectorAll(".item-row");
+      if (rows.length > 1) { rows[rows.length - 1].remove(); updateAllDropdowns(); calculateGrandTotal(); }
+      else { alert("You must keep at least one item!"); }
+    }
+    function getSelectedProducts() {
+      let selected = [];
+      document.querySelectorAll(".product").forEach(s => { if (s.value) selected.push(s.value); });
+      return selected;
+    }
+    function updateAllDropdowns() {
+      let selectedProducts = getSelectedProducts();
+      document.querySelectorAll(".product").forEach(currentSelect => {
+        let currentValue = currentSelect.value;
+        for (let j = 0; j < currentSelect.options.length; j++) {
+          let option = currentSelect.options[j];
+          if (option.value && option.value !== currentValue) {
+            option.disabled = selectedProducts.includes(option.value);
+          }
+        }
+      });
+    }
+    function handleProductChange(selectElement) {
+      let row = selectElement.closest(".item-row");
+      let productName = selectElement.value;
+      let customerType = document.getElementById("customer_type").value;
+      if (!productName || !customerType) return;
+      fetch(`/get-product-price/?product_name=${productName}&customer_type=${customerType}`)
+        .then(res => res.json())
+        .then(data => { row.querySelector(".price").value = data.price; calcRowTotal(row.querySelector(".qty")); });
+    }
+    function updateAllPrices() {
+      document.querySelectorAll(".item-row").forEach(row => {
+        let productSelect = row.querySelector(".product");
+        if (productSelect && productSelect.value) handleProductChange(productSelect);
+      });
+    }
+    function addNewItem() {
+      let template = document.getElementById("item-template");
+      let row = template.querySelector(".item-row").cloneNode(true);
+      document.getElementById("items-container").appendChild(row);
+      calculateGrandTotal();
+    }
+    function calcRowTotal(qtyInput) {
+      let row = qtyInput.closest(".item-row");
+      let qty = parseInt(row.querySelector(".qty").value) || 0;
+      let price = parseInt(row.querySelector(".price").value) || 0;
+      row.querySelector(".item-total").innerHTML = qty * price;
+      calculateGrandTotal();
+    }
+    function calculateGrandTotal() {
+      let subtotal = 0; let maxDistance = 0;
+      document.querySelectorAll(".item-row").forEach(row => {
+        subtotal += parseInt(row.querySelector(".item-total").innerHTML) || 0;
+        let distance = parseInt(row.querySelector(".distance").value) || 0;
+        if (distance > maxDistance) maxDistance = distance;
+      });
+      let transport = (!((maxDistance <= 10 && subtotal <= 500000) || (maxDistance < 10 && subtotal >= 5000000))) ? 30000 : 0;
+      document.getElementById("subtotal").innerHTML = subtotal.toLocaleString();
+      document.getElementById("transport").innerHTML = transport.toLocaleString();
+      document.getElementById("grandtotal").innerHTML = (subtotal + transport).toLocaleString();
+    }
+    document.getElementById("customer_type").onchange = function() { updateAllPrices(); };
+    document.getElementById("salesForm").onsubmit = function(e) {
+      let selectedProducts = getSelectedProducts();
+      if (selectedProducts.length !== [...new Set(selectedProducts)].length) { alert("You cannot select the same product twice!"); e.preventDefault(); return false; }
+      if (selectedProducts.length === 0) { alert("Please select at least one product!"); e.preventDefault(); return false; }
+      return true;
+    };
+    window.onload = function() { addNewItem(); };
+  </script>
+{% endblock %}

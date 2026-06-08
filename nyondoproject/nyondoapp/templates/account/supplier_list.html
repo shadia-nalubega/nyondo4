@@ -1,0 +1,139 @@
+{% extends 'base.html' %}   
+{% load static %}           
+
+{% block title %}Page Name - NyondoStock{% endblock %}   
+
+{% block content %}
+  <!-- your page content here, no
+  <body class="text-slate-800">
+     <!-- HERO SECTION -->
+ 
+    <div class="min-h-screen p-4 lg:p-8">
+      <!-- TOP NAVBAR -->
+      <nav
+        class="bg-white rounded-3xl shadow-sm border border-slate-100 p-4 mb-8"
+      >
+        <div
+          class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
+        >
+          <!-- LEFT -->
+          <div>
+            <h2 class="text-3xl font-bold text-slate-800">NyondoStock</h2>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="{% url 'supplier_credit_table' %}"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl font-semibold transition"
+            >
+              Credit Records
+            </a>
+
+            <a
+              href="{% url 'supplier_registration' %}"
+              class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-2xl font-semibold transition"
+            >
+              Register Supplier
+            </a>
+
+            <a
+              href="{% url 'supplier_credit_register' %}"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl font-semibold transition"
+            >
+              Register Credit
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- TABLE -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[900px]">
+            <thead class="bg-gray-900 text-white">
+              <tr class="border-b border-slate-200">
+                <th class="text-left py-4">Company</th>
+                <th class="text-left py-4">TRN</th>
+                <th class="text-left py-4">Description</th>
+                <th class="text-left py-4">Phone</th>
+                <th class="text-left py-4">Email</th>
+                <th class="text-left py-4">Payment</th>
+                <th class="text-left py-4">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for supplier in suppliers %}
+
+              <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-4">{{ supplier.company_name }}</td>
+
+                <td>{{ supplier.TRN }}</td>
+
+                <td>{{ supplier.product_description }}</td>
+
+                <td>{{ supplier.phone }}</td>
+
+                <td>{{ supplier.email }}</td>
+
+                <td>{{ supplier.payment_option }}</td>
+
+                <td class="py-4">
+                  <div class="flex gap-2">
+                    <a
+                      href="{% url 'view_supplier' supplier.id %}"
+                      class="bg-indigo-500 text-white px-3 py-1 rounded-lg text-sm"
+                    >
+                      View
+                    </a>
+
+                    <a
+                      href="{% url 'update_supplier' supplier.id %}"
+                      class="bg-green-500 text-white px-3 py-1 rounded-lg text-sm"
+                    >
+                      Update
+                    </a>
+
+                    <form
+                      method="POST"
+                      action="{% url 'delete_supplier' supplier.id %}"
+                      onsubmit="
+                        return confirm(
+                          'Are you sure you want to delete this supplier?',
+                        );
+                      "
+                    >
+                      {% csrf_token %}
+
+                      <button
+                        type="submit"
+                        class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+
+              {% empty %}
+
+              <tr>
+                <td colspan="7" class="text-center py-6 text-slate-500">
+                  No suppliers registered yet.
+                </td>
+              </tr>
+
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="buttons d-flex justify-content-center gap-3 mt-4">
+        <a href="{% url 'dashboard_redirect' %}" class="btn btn-secondary px-4">Back</a>
+      </div>
+    </div>
+  </body>
+  {% endblock %}   
+

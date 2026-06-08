@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Deposits - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- PAGE HEADER -->
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-slate-800">Deposits Table</h1>
+    <div class="flex gap-3">
+      <a href="{% url 'customer_deposit' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-indigo-700">New Deposit</a>
+      <a href="{% url 'deposit_page' %}" class="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-700">Deposit Page</a>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-x-auto">
+    <table class="w-full min-w-[900px]">
+      <thead class="bg-gray-900 text-white">
+        <tr>
+          <th class="text-left py-4 px-3">Deposit ID</th>
+          <th class="text-left py-4 px-3">Customer Name</th>
+          <th class="text-left py-4 px-3">Deposit Date</th>
+          <th class="text-left py-4 px-3">Expected Completion</th>
+          <th class="text-left py-4 px-3">Amount</th>
+          <th class="text-left py-4 px-3">Status</th>
+          <th class="text-left py-4 px-3">Remaining Balance</th>
+          <th class="text-left py-4 px-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for deposit in deposits %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+          <td class="py-4 px-3">{{ deposit.id }}</td>
+          <td class="px-3">{{ deposit.Customer_name.customer_name }}</td>
+          <td class="px-3">{{ deposit.deposit_date }}</td>
+          <td class="px-3">{{ deposit.expected_completion }}</td>
+          <td class="px-3 font-bold">{{ deposit.deposit_amount }} UGX</td>
+          <td class="px-3">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold
+              {% if deposit.status == 'Active' %}bg-green-100 text-green-700
+              {% elif deposit.status == 'Pending' %}bg-yellow-100 text-yellow-700
+              {% else %}bg-slate-100 text-slate-600{% endif %}">
+              {{ deposit.status }}
+            </span>
+          </td>
+          <td class="px-3 font-bold text-red-500">{{ deposit.remaining_balance|floatformat:2 }} UGX</td>
+          <td class="px-3">
+            <div class="flex gap-2">
+              <a href="{% url 'edit_deposit' deposit.id %}" class="bg-green-500 text-white px-3 py-1 rounded-lg text-sm">Edit</a>
+              <form method="POST" action="{% url 'delete_deposit' deposit.id %}" onsubmit="return confirm('Delete deposit #{{ deposit.id }}?')">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center py-6 text-slate-500">No deposits found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

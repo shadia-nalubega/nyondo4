@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Supplier Registration - NyondoStock{% endblock %}
+
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'account/css/credit.css' %}"/>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container py-5">
+    <form method="POST" action="{% url 'supplier_registration' %}"
+      class="shadow-lg p-4 rounded bg-white mx-auto" style="max-width: 780px; width: 100%;">
+      {% csrf_token %}
+
+      <div class="text-center mb-4">
+        <h2 class="text-primary">NyondoStock</h2>
+        <h3>Supplier Registration</h3>
+        <hr/>
+      </div>
+
+      <h5 class="mt-4 mb-3 text-primary pb-2">COMPANY DETAILS</h5>
+
+      <div class="row mb-3">
+
+        <!-- COMPANY NAME -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Company Name</label>
+          <input type="text" name="company_name" value="{{ company_name }}"
+            class="form-control {% if errors.company_name %}is-invalid{% endif %}"/>
+          {% if errors.company_name %}
+          <div class="invalid-feedback">{{ errors.company_name }}</div>
+          {% endif %}
+        </div>
+
+        <!-- TRN -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">TRN</label>
+          <input type="text" name="TRN" value="{{ TRN }}" placeholder="Input your TRN"
+            class="form-control {% if errors.TRN %}is-invalid{% endif %}"/>
+          {% if errors.TRN %}
+          <div class="invalid-feedback">{{ errors.TRN }}</div>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <div class="row mb-3">
+
+        <!-- LOCATION -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Location</label>
+          <input type="text" name="location" value="{{ location }}" placeholder="Input your location"
+            class="form-control {% if errors.location %}is-invalid{% endif %}"/>
+          {% if errors.location %}
+          <div class="invalid-feedback">{{ errors.location }}</div>
+          {% endif %}
+        </div>
+
+        <!-- EMAIL -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Email</label>
+          <input type="email" name="email" value="{{ email }}" placeholder="Input your Email"
+            class="form-control {% if errors.email %}is-invalid{% endif %}"/>
+          {% if errors.email %}
+          <div class="invalid-feedback">{{ errors.email }}</div>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <!-- PRODUCT DESCRIPTION -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Product Description</label>
+        <textarea name="product_description" rows="3" placeholder="Enter product description"
+          class="form-control {% if errors.product_description %}is-invalid{% endif %}">{{ product_description }}</textarea>
+        {% if errors.product_description %}
+        <div class="invalid-feedback">{{ errors.product_description }}</div>
+        {% endif %}
+      </div>
+
+      <div class="row mb-3">
+
+        <!-- PHONE -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Phone Number</label>
+          <input type="tel" name="phone" value="{{ phone }}"
+            class="form-control {% if errors.phone %}is-invalid{% endif %}"/>
+          {% if errors.phone %}
+          <div class="invalid-feedback">{{ errors.phone }}</div>
+          {% endif %}
+        </div>
+
+        <!-- PAYMENT TERMS -->
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Payment Terms</label>
+          <select name="payment_option" class="form-select">
+            <option value="cash" {% if payment_option == 'cash' %}selected{% endif %}>Cash</option>
+            <option value="bank-transfer" {% if payment_option == 'bank-transfer' %}selected{% endif %}>Bank Transfer</option>
+            <option value="card-payment" {% if payment_option == 'card-payment' %}selected{% endif %}>Card Payment</option>
+            <option value="cheque" {% if payment_option == 'cheque' %}selected{% endif %}>Cheque</option>
+            <option value="credit" {% if payment_option == 'credit' %}selected{% endif %}>Credit Options</option>
+            <option value="all" {% if payment_option == 'all' %}selected{% endif %}>All Above</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
+        <button type="submit" class="btn btn-primary px-4">Register</button>
+        <a href="{% url 'dash' %}" class="btn btn-secondary px-4">Back</a>
+      </div>
+
+      <p class="text-center mt-3 text-muted small">&copy; NyondoStock Hardware 2026</p>
+
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base_stock.html' %}
+{% load static humanize %}
+
+{% block title %}Stock Dashboard - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- STATS CARDS -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 mt-4">
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Total Stock</p>
+      <h1 class="text-4xl font-bold text-indigo-600">{{ total_stock }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Total inventory items</p>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Today's Stock Levels</p>
+      <h1 class="text-4xl font-bold text-orange-500">{{ todays_stock }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Added or updated today</p>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Low Stock Alerts</p>
+      <h1 class="text-4xl font-bold text-red-500">{{ low_stock }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Items below threshold</p>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Total Value</p>
+      <h1 class="text-4xl font-bold text-green-600">UGX {{ total_value|floatformat:0|intcomma }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Total inventory worth</p>
+    </div>
+  </div>
+
+  <!-- STOCK TABLE -->
+  <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-x-auto">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="text-2xl font-bold text-slate-800">Stock Records</h2>
+      <a href="{% url 'stock_reg' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-semibold transition">
+        + Add Stock
+      </a>
+    </div>
+    <table class="w-full min-w-[1000px]">
+      <thead class="bg-gray-900 text-white">
+        <tr>
+          <th class="text-left py-4 px-4">Description</th>
+          <th class="text-left py-4 px-4">Quantity</th>
+          <th class="text-left py-4 px-4">Unit Price</th>
+          <th class="text-left py-4 px-4">Supplier</th>
+          <th class="text-left py-4 px-4">Date</th>
+          <th class="text-left py-4 px-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stock in stock_items %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+          <td class="py-4 px-4">{{ stock.description }}</td>
+          <td class="px-4">{{ stock.quantity }}</td>
+          <td class="px-4">{{ stock.unit_price|intcomma }}</td>
+          <td class="px-4">{{ stock.supplier }}</td>
+          <td class="px-4">{{ stock.date }}</td>
+          <td class="px-4 py-4">
+            <div class="flex gap-2">
+              <a href="{% url 'view_stock' stock.id %}" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">View</a>
+              <a href="{% url 'update_stock' stock.id %}" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">Edit</a>
+              <a href="{% url 'delete_stock' stock.id %}" onclick="return confirm('Are you sure?')"
+                class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-6 text-slate-500">No stock records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

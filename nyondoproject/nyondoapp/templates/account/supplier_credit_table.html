@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Supplier Credit - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- PAGE HEADING -->
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-4xl font-bold text-slate-800">Supplier Credit</h1>
+      <p class="text-slate-500 mt-2">View and manage all supplier credit records.</p>
+    </div>
+    <a href="{% url 'supplier_credit_register' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-semibold transition">
+      + Add Credit
+    </a>
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-x-auto">
+    <table class="w-full min-w-[800px]">
+      <thead class="bg-gray-900 text-white">
+        <tr>
+          <th class="text-left py-4 px-4">Company Name</th>
+          <th class="text-left py-4 px-4">Amount Owed</th>
+          <th class="text-left py-4 px-4">Quantity</th>
+          <th class="text-left py-4 px-4">Status</th>
+          <th class="text-left py-4 px-4">Notes</th>
+          <th class="text-left py-4 px-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in supplier %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+          <td class="py-4 px-4 font-medium text-slate-800">{{ item.company_name.company_name }}</td>
+          <td class="px-4 font-bold text-red-500">{{ item.amount_owed }} UGX</td>
+          <td class="px-4 text-slate-600">{{ item.quantity }}</td>
+          <td class="px-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold
+              {% if item.status == 'Paid' %}bg-green-100 text-green-700
+              {% elif item.status == 'Pending' %}bg-yellow-100 text-yellow-700
+              {% else %}bg-slate-100 text-slate-600{% endif %}">
+              {{ item.status }}
+            </span>
+          </td>
+          <td class="px-4 text-slate-600">{{ item.notes }}</td>
+          <td class="px-4 py-4">
+            <div class="flex gap-2">
+              <a href="{% url 'view_supplier_credit' item.id %}"
+                class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                View
+              </a>
+              <a href="{% url 'update_supplier_credit' item.id %}"
+                class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                Edit
+              </a>
+              <form method="POST" action="{% url 'delete_supplier_credit' item.id %}"
+                onsubmit="return confirm('Delete credit for {{ item.company_name.company_name }}? This cannot be undone.');"
+                style="margin:0">
+                {% csrf_token %}
+                <button type="submit"
+                  class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-8 text-slate-500">No supplier credits found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

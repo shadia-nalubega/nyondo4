@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Deposit Scheme Form - NyondoStock{% endblock %}
+
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container py-5">
+    <form method="POST" action="{% url 'customer_deposit' %}"
+      class="shadow-lg p-4 rounded bg-white mx-auto" style="max-width: 780px; width: 100%;">
+      {% csrf_token %}
+
+      <div class="text-center mb-4">
+        <h1 class="text-primary">NYONDOSTOCK</h1>
+        <h4 class="text-secondary">Deposit Scheme Form</h4>
+        <hr />
+      </div>
+
+      <!-- CUSTOMER INFORMATION -->
+      <h4 class="mt-3 mb-3 text-primary border-bottom pb-2">Customer Information</h4>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Customer Name</label>
+        <input type="text" name="customer_name" id="customer_name" class="form-control" required/>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Phone Number</label>
+          <input type="text" name="phone" id="phone" class="form-control"
+            pattern="(\+256|0)7[0-9]{8}" required/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Product Name</label>
+          <select name="product_name" id="product_name" class="form-control">
+            <option value="cement">Cement</option>
+            <option value="iron sheets">Iron Sheets</option>
+            <option value="iron bars">Iron Bars</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">NIN Number</label>
+        <input type="text" name="nin" id="nin" class="form-control"
+          pattern="^[A-Z][MF]\d{4}[A-Z0-9]{7}$" required/>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Location</label>
+          <input type="text" name="location" id="location" class="form-control" required/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Total Price (UGX)</label>
+          <input type="number" name="total_price" id="total_price" class="form-control" min="5000" required/>
+        </div>
+      </div>
+
+      <!-- DEPOSIT INFORMATION -->
+      <h4 class="mt-4 mb-3 text-primary border-bottom pb-2">Deposit Information</h4>
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Deposit Amount (UGX)</label>
+          <input type="number" name="deposit_amount" id="deposit_amount" class="form-control" min="5000" required/>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Deposit Date</label>
+          <input type="date" name="deposit_date" id="deposit_date" class="form-control" required/>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Remaining Balance</label>
+          <input type="text" name="remaining_balance" id="remaining_balance" class="form-control" style="font-weight:bold;"/>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Expected Completion</label>
+          <input type="date" name="expected_completion" id="expected_completion" class="form-control" required/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Status</label>
+          <select name="status" id="status" class="form-select" required>
+            <option value="Active" selected>Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Finished">Finished</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Received By (Cashier/Admin)</label>
+        <input type="text" name="received_by" id="received_by" class="form-control" required/>
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
+        <button type="submit" class="btn btn-primary px-4 py-2">Submit Deposit</button>
+        <a href="{% url 'temp_receipt' %}" class="btn btn-secondary px-4 py-2">Print Receipt</a>
+      </div>
+
+      <p class="text-center mt-4 text-muted small">&copy; NyondoStock Hardware 2026</p>
+
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    const todayDate = `${year}-${month}-${day}`;
+    document.getElementById("deposit_date").value = todayDate;
+    document.getElementById("expected_completion").min = todayDate;
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Delete Product Pricing</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        background-color: #f0f2f5;
+      }
+      .page {
+        max-width: 500px;
+        margin: 80px auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .navbar {
+        background-color: #dc3545 !important;
+        padding: 15px 20px;
+      }
+      .navbar-brand {
+        color: white !important;
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+      .content {
+        padding: 40px;
+        text-align: center;
+      }
+      h3 {
+        color: #dc3545;
+        margin-bottom: 15px;
+      }
+      .warning-icon {
+        font-size: 48px;
+        color: #dc3545;
+        margin-bottom: 20px;
+      }
+      .product-info {
+        background-color: #fff3cd;
+        padding: 15px;
+        border-left: 4px solid #ffc107;
+        margin: 25px 0;
+        border-radius: 4px;
+        text-align: left;
+      }
+      .product-info p {
+        margin: 8px 0;
+        font-weight: 500;
+      }
+      .warning-text {
+        color: #666;
+        margin: 20px 0;
+        line-height: 1.6;
+      }
+      .buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+      }
+      .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 6px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .btn-delete {
+        background-color: #dc3545;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 6px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .btn-cancel:hover {
+        background-color: #5a6268;
+        text-decoration: none;
+      }
+      .btn-delete:hover {
+        background-color: #c82333;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <nav class="navbar">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Nyondo - Delete Pricing</a>
+        </div>
+      </nav>
+
+      <div class="content">
+        <div class="warning-icon">⚠️</div>
+        <h3>Delete Pricing Record?</h3>
+
+        <div class="product-info">
+          <p><strong>Product Name:</strong> {{ pricing.product_name }}</p>
+          <p><strong>Wholesaler Rate:</strong> {{ pricing.wholesaler_rate }}%</p>
+          <p><strong>Retailer Rate:</strong> {{ pricing.retailer_rate }}%</p>
+          <p><strong>Normal Buyer Rate:</strong> {{ pricing.normal_rate }}%</p>
+        </div>
+
+        <div class="warning-text">
+          <p>Are you sure you want to delete this pricing record?</p>
+          <p><strong>This action cannot be undone.</strong></p>
+        </div>
+
+        <form method="POST" style="display: inline;">
+          {% csrf_token %}
+          <div class="buttons">
+            <a href="{% url 'pricing_table' %}" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-delete">Yes, Delete It</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Price</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0 fw-bold">Edit Pricing — {{ pricing.product_name }}</h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Cost Price (UGX)</label>
+              <input type="number" name="cost_price" class="form-control"
+                     value="{{ cost_price }}" min="0" required />
+            </div>
+
+            <h6 class="fw-bold text-muted border-bottom pb-2 mt-4">Wholesaler</h6>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Rate (%)</label>
+              <input type="number" name="wholesaler_rate" class="form-control"
+                     value="{{ pricing.wholesaler_rate }}" min="0" required />
+              <div class="form-text">Current price: UGX {{ pricing.wholesaler_price }}</div>
+            </div>
+
+            <h6 class="fw-bold text-muted border-bottom pb-2 mt-4">Retailer</h6>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Rate (%)</label>
+              <input type="number" name="retailer_rate" class="form-control"
+                     value="{{ pricing.retailer_rate }}" min="0" required />
+              <div class="form-text">Current price: UGX {{ pricing.retailer_price }}</div>
+            </div>
+
+            <h6 class="fw-bold text-muted border-bottom pb-2 mt-4">Normal Buyer</h6>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Rate (%)</label>
+              <input type="number" name="normal_rate" class="form-control"
+                     value="{{ pricing.normal_rate }}" min="0" required />
+              <div class="form-text">Current price: UGX {{ pricing.normal_price }}</div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-success px-4">Save Changes</button>
+              <a href="{% url 'pricing_table' %}" class="btn btn-secondary px-4">Cancel</a>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+{% extends 'base_sales.html' %}
+{% load humanize %}
+
+{% block title %}Sales Dashboard - NyondoStock{% endblock %}
+
+{% block content %}
+
+  <!-- STATS CARDS -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 mt-4">
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Today's Sales</p>
+      <h1 class="text-4xl font-bold text-indigo-600">{{ today_sales_total|floatformat:0|intcomma }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Sales recorded today</p>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Today's Deposits</p>
+      <h1 class="text-4xl font-bold text-orange-500">{{ today_deposits_total|floatformat:0|intcomma }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Deposits received</p>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Complete Receipts</p>
+      <h1 class="text-4xl font-bold text-green-600">{{ complete_receipts }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Successful transactions</p>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm card-hover">
+      <p class="text-slate-500 text-sm mb-2">Pending Receipts</p>
+      <h1 class="text-4xl font-bold text-red-500">{{ pending_receipts }}</h1>
+      <p class="text-slate-400 text-xs mt-2">Awaiting completion</p>
+    </div>
+  </div>
+
+  <!-- SALES TABLE -->
+  <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-x-auto">
+    <table class="w-full min-w-[1000px]">
+      <thead class="bg-gray-900 text-white">
+        <tr>
+          <th class="text-left py-4 px-4">Date</th>
+          <th class="text-left py-4 px-4">Product</th>
+          <th class="text-left py-4 px-4">Quantity</th>
+          <th class="text-left py-4 px-4">Price</th>
+          <th class="text-left py-4 px-4">Total</th>
+          <th class="text-left py-4 px-4">Customer</th>
+          <th class="text-left py-4 px-4">Payment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in new_sale %}
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+          <td class="py-4 px-4">{{ sale.date }}</td>
+          <td class="px-4">{{ sale.product_name }}</td>
+          <td class="px-4">{{ sale.quantity }}</td>
+          <td class="px-4">{{ sale.selling_price }}</td>
+          <td class="px-4 text-green-600 font-semibold">{{ sale.total_amount }}</td>
+          <td class="px-4">{{ sale.customer_name }}</td>
+          <td class="px-4">{{ sale.payment }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center py-6 text-slate-500">No sales records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}
