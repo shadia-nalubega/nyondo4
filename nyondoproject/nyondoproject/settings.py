@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-$gnz1!jastgjzz7+s5_f!+ab+$3gvxamhq-^my##p*&_dylw%o'
-SECRET_KEY =  os.environ.get('SECRET_KEY')
+SECRET_KEY =  'django-insecure-nyondo-local-development-key-8x4p2m7q9v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['shadia.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = [ '127.0.0.1','shadia.pythonanywhere.com', 'localhost']
 
 
 # Application definition
@@ -126,5 +126,5 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
